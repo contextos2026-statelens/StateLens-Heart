@@ -19,6 +19,13 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
     @Published private(set) var latestAutonomicScores: AutonomicScores?
     @Published private(set) var latestEmotionEstimate: EmotionEstimate?
     @Published private(set) var latestAnomalyEvent: AnomalyEvent?
+    @Published private(set) var profiles: [UserProfile] = []
+    @Published private(set) var selectedUserID: String = "default-user"
+    @Published private(set) var currentBaseline: UserBaseline?
+    @Published private(set) var isCalibrating = false
+    @Published private(set) var calibrationProgress: Double = 0
+    @Published private(set) var calibrationStatusText = "未キャリブレーション"
+    @Published private(set) var calibrationRemainingText = "--:--"
 
 #if canImport(HealthKit)
     private let healthStore = HKHealthStore()
@@ -29,19 +36,58 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
     private let motionProvider = MotionSignalProvider()
     private let estimator = StateEstimator()
     private let logStore = SessionLogStore()
+    private let baselineStore = BaselineStore()
+    private let profileStore = UserProfileStore()
     private var window = SlidingHeartWindow(duration: 45)
     private var latestMotionSnapshot = MotionSnapshot(timestamp: Date(), motionScore: 0, isStationary: true)
     private var mockTimer: Timer?
     private var mockTick = 0
     private var lastAnomalyTimestamps: [AnomalyEventType: Date] = [:]
+    private var calibrationStartDate: Date?
+    private var calibrationDuration: TimeInterval = 180
+    private var calibrationCandidates: [CalibrationCandidate] = []
+    private var stopSessionAfterCalibration = false
 
     override init() {
         super.init()
+        let snapshot = profileStore.load()
+        profiles = snapshot.profiles
+        selectedUserID = snapshot.selectedUserID
+        refreshBaselineStatus()
+
+        ConnectivityBridge.shared.onProfileSync = { [weak self] userID, displayName in
+            self?.applyProfileSync(userID: userID, displayName: displayName)
+        }
 
         motionProvider.onUpdate = { [weak self] snapshot in
             Task { @MainActor in
                 self?.latestMotionSnapshot = snapshot
                 self?.latestMotionScore = snapshot.motionScore
+            }
+        }
+    }
+
+    var selectedProfile: UserProfile {
+        profiles.first(where: { $0.id == selectedUserID }) ?? UserProfile(id: "default-user", displayName: "デフォルト")
+    }
+
+    func startInitialCalibration(durationSeconds: TimeInterval = 180) {
+        guard !isCalibrating else { return }
+
+        calibrationDuration = min(max(durationSeconds, 180), 300)
+        calibrationStartDate = Date()
+        calibrationCandidates.removeAll()
+        calibrationProgress = 0
+        calibrationRemainingText = remainingText(remainingSeconds: calibrationDuration)
+        calibrationStatusText = "キャリブレーション中"
+        latestErrorMessage = nil
+        stopSessionAfterCalibration = !isRunning
+        isCalibrating = true
+
+        if !isRunning {
+            Task {
+                await requestAuthorizationIfNeeded()
+                startSession()
             }
         }
     }
@@ -107,7 +153,7 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
             workoutBuilder = builder
             resetForNewSession(inputMode: "Live")
 
-            logStore.startSession()
+            logStore.startSession(userId: selectedProfile.id, userDisplayName: selectedProfile.displayName)
             motionProvider.start()
             publishLiveStatus(isSessionRunning: true, at: startDate)
 
@@ -134,6 +180,9 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
 #if os(watchOS) && !targetEnvironment(simulator) && canImport(HealthKit)
         guard let session = workoutSession, let builder = workoutBuilder else { return }
 
+        if isCalibrating {
+            finalizeCalibration(force: true)
+        }
         isRunning = false
         motionProvider.stop()
         publishLiveStatus(isSessionRunning: false, at: Date())
@@ -199,7 +248,7 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
 
         var detectedEvents: [AnomalyEvent] = []
         if let features = window.features(referenceDate: date) {
-            currentEstimation = estimator.estimate(from: features, now: date)
+            currentEstimation = estimator.estimate(from: features, baseline: currentBaseline, now: date)
             latestAutonomicScores = estimator.autonomicScores(from: features, now: date)
             if let latestAutonomicScores {
                 latestEmotionEstimate = estimator.emotionEstimate(
@@ -221,6 +270,7 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
             latestEmotionEstimate = nil
         }
         latestAnomalyEvent = detectedEvents.last
+        updateCalibration(with: sample, signalConfidence: confidence, at: date)
 
         publishLiveStatus(isSessionRunning: isRunning, at: date)
 
@@ -251,7 +301,7 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
     private func startMockSession() {
         resetForNewSession(inputMode: "Mock")
         isRunning = true
-        logStore.startSession()
+        logStore.startSession(userId: selectedProfile.id, userDisplayName: selectedProfile.displayName)
         publishLiveStatus(isSessionRunning: true, at: Date())
         emitMockSample()
 
@@ -269,6 +319,9 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
 
     private func stopMockSession() {
         guard mockTimer != nil || isRunning else { return }
+        if isCalibrating {
+            finalizeCalibration(force: true)
+        }
         mockTimer?.invalidate()
         mockTimer = nil
         isRunning = false
@@ -291,6 +344,8 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
     private func publishLiveStatus(isSessionRunning: Bool, at date: Date) {
         let status = LiveWatchStatus(
             timestamp: date,
+            userId: selectedProfile.id,
+            userDisplayName: selectedProfile.displayName,
             isSessionRunning: isSessionRunning,
             inputMode: inputModeText,
             heartRate: currentHeartRate,
@@ -391,6 +446,168 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
         guard date.timeIntervalSince(last) >= cooldown else { return false }
         lastAnomalyTimestamps[type] = date
         return true
+    }
+
+    private func updateCalibration(with sample: HeartSample, signalConfidence: Double, at date: Date) {
+        guard isCalibrating, let calibrationStartDate else { return }
+
+        let elapsed = max(0, date.timeIntervalSince(calibrationStartDate))
+        calibrationProgress = min(1, elapsed / calibrationDuration)
+        let remaining = max(0, calibrationDuration - elapsed)
+        calibrationRemainingText = remainingText(remainingSeconds: remaining)
+
+        if signalConfidence >= 0.6, sample.motionScore <= 0.04 {
+            calibrationCandidates.append(
+                CalibrationCandidate(
+                    timestamp: sample.timestamp,
+                    bpm: sample.bpm,
+                    motionScore: sample.motionScore,
+                    signalConfidence: signalConfidence
+                )
+            )
+        }
+
+        if elapsed >= calibrationDuration {
+            finalizeCalibration(force: false)
+            if stopSessionAfterCalibration {
+                stopSessionAfterCalibration = false
+                stopSession()
+            }
+        }
+    }
+
+    private func finalizeCalibration(force: Bool) {
+        guard isCalibrating else { return }
+        isCalibrating = false
+        stopSessionAfterCalibration = false
+        calibrationProgress = 1
+        calibrationRemainingText = "00:00"
+
+        let filtered = filteredCalibrationSamples(calibrationCandidates)
+        let requiredCount: Int
+        if force {
+            requiredCount = 20
+        } else if calibrationDuration <= 180 {
+            requiredCount = 20
+        } else {
+            requiredCount = 40
+        }
+        guard filtered.count >= requiredCount else {
+            calibrationStatusText = "キャリブレーション失敗（有効サンプル不足）"
+            return
+        }
+
+        let bpmValues = filtered.map(\.bpm).sorted()
+        let resting = percentile(sorted: bpmValues, p: 0.5)
+        let p25 = percentile(sorted: bpmValues, p: 0.25)
+        let p75 = percentile(sorted: bpmValues, p: 0.75)
+        let averageSignal = filtered.map(\.signalConfidence).reduce(0, +) / Double(filtered.count)
+        let stillnessRatio = Double(filtered.filter { $0.motionScore <= 0.025 }.count) / Double(filtered.count)
+        let sampleScore = min(1, Double(filtered.count) / max(60, calibrationDuration * 0.75))
+        let confidence = min(max(sampleScore * 0.5 + averageSignal * 0.3 + stillnessRatio * 0.2, 0), 1)
+
+        let baseline = UserBaseline(
+            restingHeartRate: resting,
+            lowerBoundHeartRate: p25,
+            upperBoundHeartRate: p75,
+            confidence: confidence,
+            sampleCount: filtered.count,
+            calibrationDurationSeconds: calibrationDuration,
+            updatedAt: Date()
+        )
+
+        do {
+            try baselineStore.save(baseline, userId: selectedProfile.id)
+            currentBaseline = baseline
+            calibrationStatusText = "安静時心拍 \(Int(resting.rounded())) bpm（信頼度 \(Int((confidence * 100).rounded()))%）"
+        } catch {
+            calibrationStatusText = "キャリブレーション保存失敗"
+            latestErrorMessage = error.localizedDescription
+        }
+    }
+
+    private func filteredCalibrationSamples(_ samples: [CalibrationCandidate]) -> [CalibrationCandidate] {
+        guard !samples.isEmpty else { return [] }
+        let sortedByTime = samples.sorted { $0.timestamp < $1.timestamp }
+        let bpmValues = sortedByTime.map(\.bpm).sorted()
+        let median = percentile(sorted: bpmValues, p: 0.5)
+        let deviations = sortedByTime.map { abs($0.bpm - median) }.sorted()
+        let mad = percentile(sorted: deviations, p: 0.5)
+        let outlierLimit = mad > 0.01 ? mad * 2.5 : 12
+
+        var filtered: [CalibrationCandidate] = []
+        var lastAcceptedBPM: Double?
+        for sample in sortedByTime {
+            guard abs(sample.bpm - median) <= outlierLimit else { continue }
+            if let lastAcceptedBPM, abs(sample.bpm - lastAcceptedBPM) > 15 {
+                continue
+            }
+            filtered.append(sample)
+            lastAcceptedBPM = sample.bpm
+        }
+        return filtered
+    }
+
+    private func percentile(sorted values: [Double], p: Double) -> Double {
+        guard !values.isEmpty else { return 0 }
+        let clampedP = min(max(p, 0), 1)
+        let index = clampedP * Double(values.count - 1)
+        let lower = Int(floor(index))
+        let upper = Int(ceil(index))
+        if lower == upper { return values[lower] }
+        let weight = index - Double(lower)
+        return values[lower] * (1 - weight) + values[upper] * weight
+    }
+
+    private func remainingText(remainingSeconds: TimeInterval) -> String {
+        let total = max(0, Int(remainingSeconds.rounded(.down)))
+        let minutes = total / 60
+        let seconds = total % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+
+    private struct CalibrationCandidate {
+        let timestamp: Date
+        let bpm: Double
+        let motionScore: Double
+        let signalConfidence: Double
+    }
+
+    private func refreshBaselineStatus() {
+        currentBaseline = baselineStore.load(userId: selectedProfile.id)
+        if let currentBaseline {
+            let age = Date().timeIntervalSince(currentBaseline.updatedAt)
+            if age >= 60 * 60 * 24 * 7 {
+                calibrationStatusText = "再キャリブレーション推奨（7日以上経過）"
+            } else {
+                calibrationStatusText = "安静時心拍 \(Int(currentBaseline.restingHeartRate.rounded())) bpm"
+            }
+        } else {
+            calibrationStatusText = "未キャリブレーション"
+        }
+    }
+
+    private func persistProfiles() {
+        let snapshot = UserProfileSnapshot(profiles: profiles, selectedUserID: selectedUserID)
+        do {
+            try profileStore.save(snapshot)
+        } catch {
+            latestErrorMessage = error.localizedDescription
+        }
+    }
+
+    private func applyProfileSync(userID: String, displayName: String) {
+        if let index = profiles.firstIndex(where: { $0.id == userID }) {
+            var updated = profiles[index]
+            updated.displayName = displayName
+            updated.updatedAt = Date()
+            profiles[index] = updated
+        } else {
+            profiles.append(UserProfile(id: userID, displayName: displayName))
+        }
+        selectedUserID = userID
+        persistProfiles()
+        refreshBaselineStatus()
     }
 
     private func emitMockSample() {

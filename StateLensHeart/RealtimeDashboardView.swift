@@ -111,7 +111,7 @@ struct RealtimeDashboardView: View {
             Text("メモ")
                 .font(.headline)
 
-            Text("この画面ではWatchからのライブデータを表示します。セッション終了後のログ転送は履歴タブで確認できます。")
+            Text("この画面ではWatchからのライブデータを表示します。ユーザー設定はユーザータブ、セッション履歴は履歴タブで確認できます。")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
@@ -185,15 +185,15 @@ struct RealtimeDashboardView: View {
     private var localizedStateName: String {
         switch currentState {
         case .calm:
-            return "Calm"
+            return "安定"
         case .focused:
-            return "Focused"
+            return "集中寄り"
         case .aroused:
-            return "Aroused"
+            return "覚醒寄り"
         case .stressedLike:
-            return "Stressed-like"
+            return "緊張寄り"
         case .unknown:
-            return "Unknown"
+            return "判定保留"
         }
     }
 

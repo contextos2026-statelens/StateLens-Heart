@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SessionDetailView: View {
     let session: SessionLog
+    @State private var timelineRange: TimelineRange = .all
 
     var body: some View {
         List {
@@ -16,10 +17,11 @@ struct SessionDetailView: View {
 
     private var summarySection: some View {
         Section("サマリー") {
+            LabeledContent("ユーザー", value: session.userDisplayName)
             LabeledContent("開始", value: session.startedAt.formatted(date: .abbreviated, time: .standard))
             LabeledContent("終了", value: endText)
             LabeledContent("継続時間", value: durationText)
-            LabeledContent("最終状態", value: session.latestEstimation?.state.displayName ?? "Unknown")
+            LabeledContent("最終状態", value: localizedStateName(session.latestEstimation?.state ?? .unknown))
             LabeledContent("推定根拠", value: session.latestEstimation?.rationale ?? "未取得")
         }
     }
@@ -45,11 +47,17 @@ struct SessionDetailView: View {
 
     private var timelineSection: some View {
         Section("時系列") {
-            if session.timeline.isEmpty {
+            Picker("表示範囲", selection: $timelineRange) {
+                ForEach(TimelineRange.allCases) { range in
+                    Text(range.label).tag(range)
+                }
+            }
+
+            if filteredTimeline.isEmpty {
                 Text("時系列データはありません。")
                     .foregroundStyle(.secondary)
             } else {
-                ForEach(session.timeline.suffix(24).reversed()) { point in
+                ForEach(filteredTimeline.reversed()) { point in
                     VStack(alignment: .leading, spacing: 6) {
                         HStack {
                             Text("\(Int(point.bpm.rounded())) bpm")
@@ -69,7 +77,7 @@ struct SessionDetailView: View {
                         .foregroundStyle(.secondary)
 
                         HStack {
-                            Text("状態 \(point.state.displayName)")
+                            Text("状態 \(localizedStateName(point.state))")
                             Spacer()
                             Text(point.emotionEstimate?.displayText ?? "感情推定なし")
                         }
@@ -177,6 +185,60 @@ struct SessionDetailView: View {
             return "注意"
         case .high:
             return "高"
+        }
+    }
+
+    private func localizedStateName(_ state: AutonomicState) -> String {
+        switch state {
+        case .calm:
+            return "安定"
+        case .focused:
+            return "集中寄り"
+        case .aroused:
+            return "覚醒寄り"
+        case .stressedLike:
+            return "緊張寄り"
+        case .unknown:
+            return "判定保留"
+        }
+    }
+
+    private var filteredTimeline: [TimelinePoint] {
+        guard timelineRange != .all else { return Array(session.timeline.suffix(240)) }
+        let cutoff = Date().addingTimeInterval(-timelineRange.duration)
+        return session.timeline
+            .filter { $0.timestamp >= cutoff }
+            .suffix(240)
+            .map { $0 }
+    }
+}
+
+private enum TimelineRange: String, CaseIterable, Identifiable {
+    case tenMinutes
+    case oneHour
+    case all
+
+    var id: String { rawValue }
+
+    var duration: TimeInterval {
+        switch self {
+        case .tenMinutes:
+            return 10 * 60
+        case .oneHour:
+            return 60 * 60
+        case .all:
+            return .infinity
+        }
+    }
+
+    var label: String {
+        switch self {
+        case .tenMinutes:
+            return "10分"
+        case .oneHour:
+            return "1時間"
+        case .all:
+            return "全体"
         }
     }
 }

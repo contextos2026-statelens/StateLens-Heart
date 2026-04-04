@@ -2,18 +2,19 @@ import SwiftUI
 
 struct HistoryView: View {
     @ObservedObject var store: WatchSessionStore
+    @State private var selectedRange: HistoryRange = .all
 
     var body: some View {
         NavigationStack {
             Group {
-                if store.sessions.isEmpty {
+                if filteredSessions.isEmpty {
                     ContentUnavailableView(
                         "セッション履歴はまだありません",
                         systemImage: "waveform.path.ecg",
                         description: Text("WatchセッションがiPhoneへ転送されると、ここに保存されます。")
                     )
                 } else {
-                    List(store.sessions) { session in
+                    List(filteredSessions) { session in
                         NavigationLink {
                             SessionDetailView(session: session)
                         } label: {
@@ -25,12 +26,56 @@ struct HistoryView: View {
             }
             .navigationTitle("履歴")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Picker("期間", selection: $selectedRange) {
+                        ForEach(HistoryRange.allCases) { range in
+                            Text(range.label).tag(range)
+                        }
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("更新") {
                         store.refreshHistory()
                     }
                 }
             }
+        }
+    }
+
+    private var filteredSessions: [SessionLog] {
+        let source = store.sessions
+        guard selectedRange != .all else { return source }
+        let cutoff = Date().addingTimeInterval(-selectedRange.duration)
+        return source.filter { $0.startedAt >= cutoff }
+    }
+}
+
+private enum HistoryRange: String, CaseIterable, Identifiable {
+    case day
+    case week
+    case all
+
+    var id: String { rawValue }
+
+    var duration: TimeInterval {
+        switch self {
+        case .day:
+            return 60 * 60 * 24
+        case .week:
+            return 60 * 60 * 24 * 7
+        case .all:
+            return .infinity
+        }
+    }
+
+    var label: String {
+        switch self {
+        case .day:
+            return "24時間"
+        case .week:
+            return "7日"
+        case .all:
+            return "全期間"
         }
     }
 }
@@ -51,7 +96,7 @@ private struct SessionRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(session.latestEstimation?.state.displayName ?? "Unknown")
+                Text(localizedState(session.latestEstimation?.state ?? .unknown))
                     .font(.headline)
                 Spacer()
                 Text(durationText)
@@ -104,5 +149,20 @@ private struct SessionRowView: View {
 
     private var latestEmotionText: String {
         session.timeline.last?.emotionEstimate?.displayText ?? "未取得"
+    }
+
+    private func localizedState(_ state: AutonomicState) -> String {
+        switch state {
+        case .calm:
+            return "安定"
+        case .focused:
+            return "集中寄り"
+        case .aroused:
+            return "覚醒寄り"
+        case .stressedLike:
+            return "緊張寄り"
+        case .unknown:
+            return "判定保留"
+        }
     }
 }

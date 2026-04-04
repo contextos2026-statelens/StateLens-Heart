@@ -7,6 +7,9 @@ import WatchConnectivity
 @MainActor
 final class WatchSessionStore: NSObject, ObservableObject {
     @Published private(set) var sessions: [SessionLog] = []
+    @Published private(set) var allSessions: [SessionLog] = []
+    @Published private(set) var profiles: [UserProfile] = []
+    @Published private(set) var selectedUserID: String = "default-user"
     @Published private(set) var liveStatus: LiveWatchStatus?
     @Published private(set) var activationStateText = "Preparing connectivity"
     @Published private(set) var isWatchPaired = false
@@ -16,6 +19,9 @@ final class WatchSessionStore: NSObject, ObservableObject {
     @Published private(set) var latestErrorMessage: String?
 
     private let fileManager = FileManager.default
+    private let profileStore = UserProfileStore()
+    private var receivedLiveMessageIDs: [String] = []
+    private var latestSequenceByUserID: [String: Int] = [:]
     private let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
@@ -31,12 +37,34 @@ final class WatchSessionStore: NSObject, ObservableObject {
 
     override init() {
         super.init()
+        let snapshot = profileStore.load()
+        profiles = snapshot.profiles
+        selectedUserID = snapshot.selectedUserID
         loadSavedSessions()
         activateConnectivityIfSupported()
     }
 
     func refreshHistory() {
         loadSavedSessions()
+    }
+
+    func selectUser(_ userID: String) {
+        guard profiles.contains(where: { $0.id == userID }) else { return }
+        selectedUserID = userID
+        persistProfiles()
+        applyUserFilter()
+        syncSelectedUserToWatch()
+    }
+
+    func createUser(named name: String) {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        let profile = UserProfile(displayName: trimmed)
+        profiles.append(profile)
+        selectedUserID = profile.id
+        persistProfiles()
+        applyUserFilter()
+        syncSelectedUserToWatch()
     }
 
     private func activateConnectivityIfSupported() {
@@ -75,12 +103,14 @@ final class WatchSessionStore: NSObject, ObservableObject {
                 options: [.skipsHiddenFiles]
             )
 
-            sessions = try urls
+            allSessions = try urls
                 .filter { $0.pathExtension == "json" }
                 .map(loadSessionLog(from:))
                 .sorted { lhs, rhs in
                     lhs.startedAt > rhs.startedAt
                 }
+            allSessions.forEach { ensureProfile(id: $0.userId, name: $0.userDisplayName) }
+            applyUserFilter()
             latestErrorMessage = nil
         } catch {
             latestErrorMessage = error.localizedDescription
@@ -113,6 +143,7 @@ final class WatchSessionStore: NSObject, ObservableObject {
     private func ingestSessionLogData(_ data: Data) {
         do {
             let log = try decoder.decode(SessionLog.self, from: data)
+            ensureProfile(id: log.userId, name: log.userDisplayName)
             try save(sessionLog: log)
             loadSavedSessions()
             lastReceivedAt = Date()
@@ -124,6 +155,8 @@ final class WatchSessionStore: NSObject, ObservableObject {
 
     private func ingestLivePayload(_ payload: [String: Any]) {
         guard let status = makeLiveStatus(from: payload) else { return }
+        guard shouldAcceptLiveStatus(status) else { return }
+        ensureProfile(id: status.userId, name: status.userDisplayName)
         liveStatus = status
         lastReceivedAt = status.timestamp
         latestErrorMessage = nil
@@ -141,7 +174,11 @@ final class WatchSessionStore: NSObject, ObservableObject {
         let state = AutonomicState(rawValue: stateRawValue) ?? .unknown
 
         return LiveWatchStatus(
+            messageID: payload["messageID"] as? String ?? UUID().uuidString,
+            sequenceNumber: parseInt(payload["sequenceNumber"]) ?? 0,
             timestamp: timestamp,
+            userId: payload["userId"] as? String ?? "default-user",
+            userDisplayName: payload["userDisplayName"] as? String ?? "デフォルト",
             isSessionRunning: payload["isSessionRunning"] as? Bool ?? true,
             inputMode: payload["inputMode"] as? String ?? "Unknown",
             heartRate: parseDouble(payload["heartRate"]),
@@ -180,7 +217,7 @@ final class WatchSessionStore: NSObject, ObservableObject {
             timestamp: parseDate(dict["timestamp"]) ?? Date(),
             label: label,
             confidence: parseDouble(dict["confidence"]) ?? 0,
-            displayText: dict["displayText"] as? String ?? "\(label.displayName) (Inferred)"
+            displayText: dict["displayText"] as? String ?? "\(label.japaneseName)（推定）"
         )
     }
 
@@ -245,6 +282,75 @@ final class WatchSessionStore: NSObject, ObservableObject {
             return nil
         }
     }
+
+    private func applyUserFilter() {
+        sessions = allSessions.filter { $0.userId == selectedUserID }
+    }
+
+    private func persistProfiles() {
+        do {
+            try profileStore.save(UserProfileSnapshot(profiles: profiles, selectedUserID: selectedUserID))
+        } catch {
+            latestErrorMessage = error.localizedDescription
+        }
+    }
+
+    private func ensureProfile(id: String, name: String) {
+        if profiles.contains(where: { $0.id == id }) {
+            return
+        }
+        let profile = UserProfile(id: id, displayName: name)
+        profiles.append(profile)
+        persistProfiles()
+    }
+
+    private func shouldAcceptLiveStatus(_ status: LiveWatchStatus) -> Bool {
+        if receivedLiveMessageIDs.contains(status.messageID) {
+            return false
+        }
+        receivedLiveMessageIDs.append(status.messageID)
+        if receivedLiveMessageIDs.count > 250 {
+            receivedLiveMessageIDs.removeFirst(receivedLiveMessageIDs.count - 250)
+        }
+
+        let lastSequence = latestSequenceByUserID[status.userId] ?? 0
+        if status.sequenceNumber > 0, status.sequenceNumber < lastSequence {
+            if let liveStatus, status.timestamp.timeIntervalSince(liveStatus.timestamp) < 20 {
+                return false
+            }
+        }
+        latestSequenceByUserID[status.userId] = max(lastSequence, status.sequenceNumber)
+        return true
+    }
+
+    private func syncSelectedUserToWatch() {
+#if canImport(WatchConnectivity) && os(iOS)
+        guard WCSession.isSupported() else { return }
+        let session = WCSession.default
+        guard let profile = profiles.first(where: { $0.id == selectedUserID }) else { return }
+        let payload: [String: Any] = [
+            ConnectivityEnvelope.kindKey: ConnectivityEnvelope.profileSyncKind,
+            "messageID": UUID().uuidString,
+            "timestamp": Date().timeIntervalSince1970,
+            "userId": profile.id,
+            "userDisplayName": profile.displayName
+        ]
+
+        do {
+            try session.updateApplicationContext(payload)
+        } catch {
+            latestErrorMessage = error.localizedDescription
+        }
+
+        if session.isReachable {
+            session.sendMessage(payload, replyHandler: nil) { [weak self] error in
+                Task { @MainActor in
+                    self?.latestErrorMessage = error.localizedDescription
+                }
+            }
+        }
+#endif
+    }
 }
 
 #if canImport(WatchConnectivity)
@@ -259,6 +365,8 @@ extension WatchSessionStore: WCSessionDelegate {
             self.activationStateText = Self.activationText(for: activationState, error: error)
             if let error {
                 self.latestErrorMessage = error.localizedDescription
+            } else {
+                self.syncSelectedUserToWatch()
             }
         }
     }
@@ -324,6 +432,7 @@ extension WatchSessionStore {
     nonisolated func sessionWatchStateDidChange(_ session: WCSession) {
         Task { @MainActor in
             self.syncConnectivityState(from: session)
+            self.syncSelectedUserToWatch()
         }
     }
 

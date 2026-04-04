@@ -10,8 +10,12 @@ final class SessionLogStore {
 
     private var activeLog: SessionLog?
 
-    func startSession() {
-        activeLog = SessionLog(startedAt: Date())
+    func startSession(userId: String, userDisplayName: String) {
+        activeLog = SessionLog(
+            userId: userId,
+            userDisplayName: userDisplayName,
+            startedAt: Date()
+        )
         persistActiveLog()
     }
 

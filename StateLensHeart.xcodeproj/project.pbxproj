@@ -7,17 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-			1970B8C82F81227C000A60BD /* StateLensHeart Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 1970B8C72F81227C000A60BD /* StateLensHeart Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1970B8C82F81227C000A60BD /* StateLensHeart Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 1970B8C72F81227C000A60BD /* StateLensHeart Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-			1970B8C92F81227C000A60BD /* PBXContainerItemProxy */ = {
-				isa = PBXContainerItemProxy;
-				containerPortal = 1970B8B22F81227C000A60BD /* Project object */;
-				proxyType = 1;
-				remoteGlobalIDString = 1970B8C62F81227C000A60BD;
-				remoteInfo = "StateLensHeart Watch App";
-			};
+		1970B8C92F81227C000A60BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1970B8B22F81227C000A60BD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1970B8C62F81227C000A60BD;
+			remoteInfo = "StateLensHeart Watch App";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,7 +27,7 @@
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				1970B8C82F81227C000A60BD /* StateLens-Heart Watch App.app in Embed Watch Content */,
+				1970B8C82F81227C000A60BD /* StateLensHeart Watch App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -35,26 +35,26 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-			1970B8BA2F81227C000A60BD /* StateLensHeart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StateLensHeart.app; sourceTree = BUILT_PRODUCTS_DIR; };
-			1970B8C72F81227C000A60BD /* StateLensHeart Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "StateLensHeart Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1970B8BA2F81227C000A60BD /* StateLensHeart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StateLensHeart.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1970B8C72F81227C000A60BD /* StateLensHeart Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "StateLensHeart Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-			1970B8BC2F81227C000A60BD /* StateLensHeart */ = {
-				isa = PBXFileSystemSynchronizedRootGroup;
-				path = StateLensHeart;
-				sourceTree = "<group>";
-			};
-			1970C0002F81227C000A60BD /* Shared */ = {
-				isa = PBXFileSystemSynchronizedRootGroup;
-				path = Shared;
-				sourceTree = "<group>";
-			};
-			1970B8CB2F81227C000A60BD /* StateLensHeart Watch App */ = {
-				isa = PBXFileSystemSynchronizedRootGroup;
-				path = "StateLensHeart Watch App";
-				sourceTree = "<group>";
-			};
+		1970B8BC2F81227C000A60BD /* StateLensHeart */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = StateLensHeart;
+			sourceTree = "<group>";
+		};
+		1970B8CB2F81227C000A60BD /* StateLensHeart Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "StateLensHeart Watch App";
+			sourceTree = "<group>";
+		};
+		1970C0002F81227C000A60BD /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,19 +77,19 @@
 /* Begin PBXGroup section */
 		1970B8B12F81227C000A60BD = {
 			isa = PBXGroup;
-				children = (
-						1970B8BC2F81227C000A60BD /* StateLensHeart */,
-						1970C0002F81227C000A60BD /* Shared */,
-						1970B8CB2F81227C000A60BD /* StateLensHeart Watch App */,
-						1970B8BB2F81227C000A60BD /* Products */,
-				);
+			children = (
+				1970B8BC2F81227C000A60BD /* StateLensHeart */,
+				1970C0002F81227C000A60BD /* Shared */,
+				1970B8CB2F81227C000A60BD /* StateLensHeart Watch App */,
+				1970B8BB2F81227C000A60BD /* Products */,
+			);
 			sourceTree = "<group>";
 		};
 		1970B8BB2F81227C000A60BD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-					1970B8BA2F81227C000A60BD /* StateLensHeart.app */,
-					1970B8C72F81227C000A60BD /* StateLensHeart Watch App.app */,
+				1970B8BA2F81227C000A60BD /* StateLensHeart.app */,
+				1970B8C72F81227C000A60BD /* StateLensHeart Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -97,9 +97,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-			1970B8B92F81227C000A60BD /* StateLensHeart */ = {
-				isa = PBXNativeTarget;
-				buildConfigurationList = 1970B8D82F81227D000A60BD /* Build configuration list for PBXNativeTarget "StateLensHeart" */;
+		1970B8B92F81227C000A60BD /* StateLensHeart */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1970B8D82F81227D000A60BD /* Build configuration list for PBXNativeTarget "StateLensHeart" */;
 			buildPhases = (
 				1970B8B62F81227C000A60BD /* Sources */,
 				1970B8B72F81227C000A60BD /* Frameworks */,
@@ -111,20 +111,20 @@
 			dependencies = (
 				1970B8CA2F81227C000A60BD /* PBXTargetDependency */,
 			);
-				fileSystemSynchronizedGroups = (
-						1970B8BC2F81227C000A60BD /* StateLensHeart */,
-						1970C0002F81227C000A60BD /* Shared */,
-					);
-				name = StateLensHeart;
-				packageProductDependencies = (
-				);
-				productName = StateLensHeart;
-				productReference = 1970B8BA2F81227C000A60BD /* StateLensHeart.app */;
-				productType = "com.apple.product-type.application";
-			};
-			1970B8C62F81227C000A60BD /* StateLensHeart Watch App */ = {
-				isa = PBXNativeTarget;
-				buildConfigurationList = 1970B8D42F81227D000A60BD /* Build configuration list for PBXNativeTarget "StateLensHeart Watch App" */;
+			fileSystemSynchronizedGroups = (
+				1970B8BC2F81227C000A60BD /* StateLensHeart */,
+				1970C0002F81227C000A60BD /* Shared */,
+			);
+			name = StateLensHeart;
+			packageProductDependencies = (
+			);
+			productName = StateLensHeart;
+			productReference = 1970B8BA2F81227C000A60BD /* StateLensHeart.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1970B8C62F81227C000A60BD /* StateLensHeart Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1970B8D42F81227D000A60BD /* Build configuration list for PBXNativeTarget "StateLensHeart Watch App" */;
 			buildPhases = (
 				1970B8C32F81227C000A60BD /* Sources */,
 				1970B8C42F81227C000A60BD /* Frameworks */,
@@ -134,21 +134,21 @@
 			);
 			dependencies = (
 			);
-				fileSystemSynchronizedGroups = (
-						1970C0002F81227C000A60BD /* Shared */,
-						1970B8CB2F81227C000A60BD /* StateLensHeart Watch App */,
-					);
-				name = "StateLensHeart Watch App";
-				packageProductDependencies = (
-				);
-				productName = "StateLensHeart Watch App";
-				productReference = 1970B8C72F81227C000A60BD /* StateLensHeart Watch App.app */;
-				productType = "com.apple.product-type.application";
-			};
+			fileSystemSynchronizedGroups = (
+				1970B8CB2F81227C000A60BD /* StateLensHeart Watch App */,
+				1970C0002F81227C000A60BD /* Shared */,
+			);
+			name = "StateLensHeart Watch App";
+			packageProductDependencies = (
+			);
+			productName = "StateLensHeart Watch App";
+			productReference = 1970B8C72F81227C000A60BD /* StateLensHeart Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-			1970B8B22F81227C000A60BD /* Project object */ = {
+		1970B8B22F81227C000A60BD /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
@@ -167,7 +167,7 @@
 					};
 				};
 			};
-				buildConfigurationList = 1970B8B52F81227C000A60BD /* Build configuration list for PBXProject "StateLensHeart" */;
+			buildConfigurationList = 1970B8B52F81227C000A60BD /* Build configuration list for PBXProject "StateLensHeart" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -181,10 +181,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-					1970B8B92F81227C000A60BD /* StateLensHeart */,
-					1970B8C62F81227C000A60BD /* StateLensHeart Watch App */,
-				);
-			};
+				1970B8B92F81227C000A60BD /* StateLensHeart */,
+				1970B8C62F81227C000A60BD /* StateLensHeart Watch App */,
+			);
+		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -222,11 +222,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-			1970B8CA2F81227C000A60BD /* PBXTargetDependency */ = {
-				isa = PBXTargetDependency;
-				target = 1970B8C62F81227C000A60BD /* StateLensHeart Watch App */;
-				targetProxy = 1970B8C92F81227C000A60BD /* PBXContainerItemProxy */;
-			};
+		1970B8CA2F81227C000A60BD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1970B8C62F81227C000A60BD /* StateLensHeart Watch App */;
+			targetProxy = 1970B8C92F81227C000A60BD /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -351,19 +351,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-					CODE_SIGN_STYLE = Automatic;
-					CODE_SIGN_ENTITLEMENTS = "Config/Watch/StateLensHeartWatch.entitlements";
-					CURRENT_PROJECT_VERSION = 1;
-					DEVELOPMENT_TEAM = X8YW3A4U4B;
-					ENABLE_PREVIEWS = YES;
-					GENERATE_INFOPLIST_FILE = NO;
-					INFOPLIST_FILE = "Config/Watch/Info.plist";
-					LD_RUNPATH_SEARCH_PATHS = (
-						"$(inherited)",
-						"@executable_path/Frameworks",
+				CODE_SIGN_ENTITLEMENTS = Config/Watch/StateLensHeartWatch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = X8YW3A4U4B;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Config/Watch/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-					PRODUCT_BUNDLE_IDENTIFIER = "app.Nishioka.Mahirosann.StateLensHeart.watchkitapp";
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.Nishioka.Mahirosann.StateLensHeart.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -383,19 +383,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-					CODE_SIGN_STYLE = Automatic;
-					CODE_SIGN_ENTITLEMENTS = "Config/Watch/StateLensHeartWatch.entitlements";
-					CURRENT_PROJECT_VERSION = 1;
-					DEVELOPMENT_TEAM = X8YW3A4U4B;
-					ENABLE_PREVIEWS = YES;
-					GENERATE_INFOPLIST_FILE = NO;
-					INFOPLIST_FILE = "Config/Watch/Info.plist";
-					LD_RUNPATH_SEARCH_PATHS = (
-						"$(inherited)",
-						"@executable_path/Frameworks",
+				CODE_SIGN_ENTITLEMENTS = Config/Watch/StateLensHeartWatch.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = X8YW3A4U4B;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Config/Watch/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-					PRODUCT_BUNDLE_IDENTIFIER = "app.Nishioka.Mahirosann.StateLensHeart.watchkitapp";
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.Nishioka.Mahirosann.StateLensHeart.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -414,22 +414,22 @@
 		1970B8D92F81227D000A60BD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-					ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-					ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-					CODE_SIGN_STYLE = Automatic;
-					CODE_SIGN_ENTITLEMENTS = "Config/iPhone/StateLensHeart.entitlements";
-					CURRENT_PROJECT_VERSION = 1;
-					DEVELOPMENT_TEAM = X8YW3A4U4B;
-					ENABLE_PREVIEWS = YES;
-					GENERATE_INFOPLIST_FILE = NO;
-					INFOPLIST_FILE = "Config/iPhone/Info.plist";
-					IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-					LD_RUNPATH_SEARCH_PATHS = (
-						"$(inherited)",
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Config/iPhone/StateLensHeart.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = X8YW3A4U4B;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Config/iPhone/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-					PRODUCT_BUNDLE_IDENTIFIER = "app.Nishioka.Mahirosann.StateLensHeart";
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.Nishioka.Mahirosann.StateLensHeart;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -445,22 +445,22 @@
 		1970B8DA2F81227D000A60BD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-					ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-					ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-					CODE_SIGN_STYLE = Automatic;
-					CODE_SIGN_ENTITLEMENTS = "Config/iPhone/StateLensHeart.entitlements";
-					CURRENT_PROJECT_VERSION = 1;
-					DEVELOPMENT_TEAM = X8YW3A4U4B;
-					ENABLE_PREVIEWS = YES;
-					GENERATE_INFOPLIST_FILE = NO;
-					INFOPLIST_FILE = "Config/iPhone/Info.plist";
-					IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-					LD_RUNPATH_SEARCH_PATHS = (
-						"$(inherited)",
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Config/iPhone/StateLensHeart.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = X8YW3A4U4B;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Config/iPhone/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-					PRODUCT_BUNDLE_IDENTIFIER = "app.Nishioka.Mahirosann.StateLensHeart";
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = app.Nishioka.Mahirosann.StateLensHeart;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -477,7 +477,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-			1970B8B52F81227C000A60BD /* Build configuration list for PBXProject "StateLensHeart" */ = {
+		1970B8B52F81227C000A60BD /* Build configuration list for PBXProject "StateLensHeart" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1970B8D22F81227D000A60BD /* Debug */,
@@ -486,7 +486,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-			1970B8D42F81227D000A60BD /* Build configuration list for PBXNativeTarget "StateLensHeart Watch App" */ = {
+		1970B8D42F81227D000A60BD /* Build configuration list for PBXNativeTarget "StateLensHeart Watch App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1970B8D52F81227D000A60BD /* Debug */,
@@ -495,7 +495,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-			1970B8D82F81227D000A60BD /* Build configuration list for PBXNativeTarget "StateLensHeart" */ = {
+		1970B8D82F81227D000A60BD /* Build configuration list for PBXNativeTarget "StateLensHeart" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1970B8D92F81227D000A60BD /* Debug */,

@@ -1,7 +1,11 @@
 import Foundation
 
 struct LiveWatchStatus: Codable, Hashable {
+    let messageID: String
+    let sequenceNumber: Int
     let timestamp: Date
+    let userId: String
+    let userDisplayName: String
     let isSessionRunning: Bool
     let inputMode: String
     let heartRate: Double?
@@ -15,7 +19,11 @@ struct LiveWatchStatus: Codable, Hashable {
     let latestEvent: AnomalyEvent?
 
     init(
+        messageID: String = UUID().uuidString,
+        sequenceNumber: Int = 0,
         timestamp: Date,
+        userId: String,
+        userDisplayName: String,
         isSessionRunning: Bool,
         inputMode: String,
         heartRate: Double?,
@@ -28,7 +36,11 @@ struct LiveWatchStatus: Codable, Hashable {
         emotionEstimate: EmotionEstimate?,
         latestEvent: AnomalyEvent?
     ) {
+        self.messageID = messageID
+        self.sequenceNumber = sequenceNumber
         self.timestamp = timestamp
+        self.userId = userId
+        self.userDisplayName = userDisplayName
         self.isSessionRunning = isSessionRunning
         self.inputMode = inputMode
         self.heartRate = heartRate
@@ -43,7 +55,11 @@ struct LiveWatchStatus: Codable, Hashable {
     }
 
     enum CodingKeys: String, CodingKey {
+        case messageID
+        case sequenceNumber
         case timestamp
+        case userId
+        case userDisplayName
         case isSessionRunning
         case inputMode
         case heartRate
@@ -59,7 +75,11 @@ struct LiveWatchStatus: Codable, Hashable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        messageID = try container.decodeIfPresent(String.self, forKey: .messageID) ?? UUID().uuidString
+        sequenceNumber = try container.decodeIfPresent(Int.self, forKey: .sequenceNumber) ?? 0
         timestamp = try container.decode(Date.self, forKey: .timestamp)
+        userId = try container.decodeIfPresent(String.self, forKey: .userId) ?? "default-user"
+        userDisplayName = try container.decodeIfPresent(String.self, forKey: .userDisplayName) ?? "デフォルト"
         isSessionRunning = try container.decodeIfPresent(Bool.self, forKey: .isSessionRunning) ?? true
         inputMode = try container.decodeIfPresent(String.self, forKey: .inputMode) ?? "Unknown"
         heartRate = try container.decodeIfPresent(Double.self, forKey: .heartRate)
@@ -78,4 +98,5 @@ enum ConnectivityEnvelope {
     static let kindKey = "kind"
     static let liveStatusKind = "live-status"
     static let sessionLogKind = "session-log"
+    static let profileSyncKind = "profile-sync"
 }

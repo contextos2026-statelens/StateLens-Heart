@@ -11,6 +11,10 @@ import SwiftUI
 struct StateLensHeartApp: App {
     @StateObject private var store = WatchSessionStore()
 
+    init() {
+        DebugSanityChecks.runIfNeeded()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView(store: store)

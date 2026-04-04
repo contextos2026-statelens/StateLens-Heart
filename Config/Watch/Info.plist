@@ -21,9 +21,9 @@
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>心拍やワークアウト情報を読み取り、状態推定に使用します。</string>
+	<string>心拍やワークアウト情報を読み取り、ウェルネス推定に使用します。医療診断用途ではありません。</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>計測セッションをワークアウトとして保存するために使用します。</string>
+	<string>計測セッションをワークアウトとして保存し、推定履歴に活用するために使用します。医療診断用途ではありません。</string>
 	<key>NSMotionUsageDescription</key>
 	<string>動き量を用いて心拍信号の信頼度を補正するために使用します。</string>
 	<key>WKApplication</key>

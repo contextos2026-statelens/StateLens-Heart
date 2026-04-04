@@ -175,6 +175,35 @@ struct TimelinePoint: Codable, Identifiable, Hashable {
     }
 }
 
+struct UserBaseline: Codable, Hashable {
+    let restingHeartRate: Double
+    let lowerBoundHeartRate: Double
+    let upperBoundHeartRate: Double
+    let confidence: Double
+    let sampleCount: Int
+    let calibrationDurationSeconds: TimeInterval
+    let updatedAt: Date
+}
+
+struct UserProfile: Codable, Identifiable, Hashable {
+    let id: String
+    var displayName: String
+    let createdAt: Date
+    var updatedAt: Date
+
+    init(
+        id: String = UUID().uuidString,
+        displayName: String,
+        createdAt: Date = Date(),
+        updatedAt: Date = Date()
+    ) {
+        self.id = id
+        self.displayName = displayName
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
+}
+
 struct HeartSample: Codable, Identifiable, Hashable {
     let id: UUID
     let timestamp: Date
@@ -221,6 +250,8 @@ struct StateEstimation: Codable, Hashable {
 
 struct SessionLog: Codable, Identifiable, Hashable {
     let id: UUID
+    var userId: String
+    var userDisplayName: String
     let startedAt: Date
     var endedAt: Date?
     var samples: [HeartSample]
@@ -231,15 +262,19 @@ struct SessionLog: Codable, Identifiable, Hashable {
 
     init(
         id: UUID = UUID(),
+        userId: String = "default-user",
+        userDisplayName: String = "デフォルト",
         startedAt: Date = Date(),
         endedAt: Date? = nil,
         samples: [HeartSample] = [],
         latestEstimation: StateEstimation? = nil,
         timeline: [TimelinePoint] = [],
         events: [AnomalyEvent] = [],
-        schemaVersion: Int = 2
+        schemaVersion: Int = 3
     ) {
         self.id = id
+        self.userId = userId
+        self.userDisplayName = userDisplayName
         self.startedAt = startedAt
         self.endedAt = endedAt
         self.samples = samples
@@ -251,6 +286,8 @@ struct SessionLog: Codable, Identifiable, Hashable {
 
     enum CodingKeys: String, CodingKey {
         case id
+        case userId
+        case userDisplayName
         case startedAt
         case endedAt
         case samples
@@ -263,6 +300,8 @@ struct SessionLog: Codable, Identifiable, Hashable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        userId = try container.decodeIfPresent(String.self, forKey: .userId) ?? "default-user"
+        userDisplayName = try container.decodeIfPresent(String.self, forKey: .userDisplayName) ?? "デフォルト"
         startedAt = try container.decode(Date.self, forKey: .startedAt)
         endedAt = try container.decodeIfPresent(Date.self, forKey: .endedAt)
         samples = try container.decodeIfPresent([HeartSample].self, forKey: .samples) ?? []

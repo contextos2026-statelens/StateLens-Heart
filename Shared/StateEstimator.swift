@@ -2,7 +2,16 @@ import Foundation
 
 struct StateEstimator {
     func estimate(from features: WindowFeatures, now: Date = Date()) -> StateEstimation {
+        estimate(from: features, baseline: nil, now: now)
+    }
+
+    func estimate(from features: WindowFeatures, baseline: UserBaseline?, now: Date = Date()) -> StateEstimation {
         let confidence = confidenceScore(features: features)
+        let restingHR = baseline?.restingHeartRate ?? 72
+        let calmThreshold = min(restingHR + 6, 82)
+        let focusedUpper = restingHR + 16
+        let arousedThreshold = max(restingHR + 18, 88)
+        let stressedThreshold = max(restingHR + 24, 92)
 
         guard confidence >= 0.55 else {
             return StateEstimation(
@@ -14,37 +23,37 @@ struct StateEstimator {
             )
         }
 
-        if features.meanHR >= 98, features.motionMean <= 0.05, features.shortTermVariation <= 2.5 {
+        if features.meanHR >= stressedThreshold, features.motionMean <= 0.05, features.shortTermVariation <= 2.5 {
             return StateEstimation(
                 state: .stressedLike,
                 confidence: confidence,
                 features: features,
-                rationale: "high HR with low motion and low short-term variation",
+                rationale: "high HR above personal baseline with low motion and low short-term variation",
                 timestamp: now
             )
         }
 
-        if features.meanHR >= 95 || (features.heartRateSlopePerMinute >= 12 && features.motionMean >= 0.08) {
+        if features.meanHR >= arousedThreshold || (features.heartRateSlopePerMinute >= 12 && features.motionMean >= 0.08) {
             return StateEstimation(
                 state: .aroused,
                 confidence: confidence,
                 features: features,
-                rationale: "elevated or rising HR with movement",
+                rationale: "elevated or rising HR relative to personal baseline with movement",
                 timestamp: now
             )
         }
 
-        if features.meanHR <= 78, features.motionMean <= 0.04, features.stationaryRatio >= 0.75 {
+        if features.meanHR <= calmThreshold, features.motionMean <= 0.04, features.stationaryRatio >= 0.75 {
             return StateEstimation(
                 state: .calm,
                 confidence: confidence,
                 features: features,
-                rationale: "lower HR with stable and stationary signal",
+                rationale: "lower HR near personal resting range with stable and stationary signal",
                 timestamp: now
             )
         }
 
-        if features.meanHR < 92, features.motionMean <= 0.06, features.shortTermVariation < 5.5 {
+        if features.meanHR < focusedUpper, features.motionMean <= 0.06, features.shortTermVariation < 5.5 {
             return StateEstimation(
                 state: .focused,
                 confidence: confidence,

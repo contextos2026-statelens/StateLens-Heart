@@ -9,6 +9,10 @@ import SwiftUI
 
 @main
 struct StateLensHeartWatchApp: App {
+    init() {
+        DebugSanityChecks.runIfNeeded()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()

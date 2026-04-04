@@ -14,6 +14,11 @@ struct ContentView: View {
                 .tabItem {
                     Label("履歴", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
                 }
+
+            UserSettingsView(store: store)
+                .tabItem {
+                    Label("ユーザー", systemImage: "person.2.fill")
+                }
         }
     }
 }
