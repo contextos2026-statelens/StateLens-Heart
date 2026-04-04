@@ -15,10 +15,21 @@ final class SessionLogStore {
         persistActiveLog()
     }
 
-    func append(sample: HeartSample, estimation: StateEstimation?) {
+    func append(
+        sample: HeartSample,
+        estimation: StateEstimation?,
+        timelinePoint: TimelinePoint?,
+        newEvents: [AnomalyEvent]
+    ) {
         guard var log = activeLog else { return }
         log.samples.append(sample)
         log.latestEstimation = estimation
+        if let timelinePoint {
+            log.timeline.append(timelinePoint)
+        }
+        if !newEvents.isEmpty {
+            log.events.append(contentsOf: newEvents)
+        }
         activeLog = log
         persistActiveLog()
     }

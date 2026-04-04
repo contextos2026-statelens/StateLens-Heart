@@ -1,0 +1,510 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+			1970B8C82F81227C000A60BD /* StateLensHeart Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 1970B8C72F81227C000A60BD /* StateLensHeart Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+			1970B8C92F81227C000A60BD /* PBXContainerItemProxy */ = {
+				isa = PBXContainerItemProxy;
+				containerPortal = 1970B8B22F81227C000A60BD /* Project object */;
+				proxyType = 1;
+				remoteGlobalIDString = 1970B8C62F81227C000A60BD;
+				remoteInfo = "StateLensHeart Watch App";
+			};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1970B8D72F81227D000A60BD /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				1970B8C82F81227C000A60BD /* StateLens-Heart Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+			1970B8BA2F81227C000A60BD /* StateLensHeart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StateLensHeart.app; sourceTree = BUILT_PRODUCTS_DIR; };
+			1970B8C72F81227C000A60BD /* StateLensHeart Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "StateLensHeart Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+			1970B8BC2F81227C000A60BD /* StateLensHeart */ = {
+				isa = PBXFileSystemSynchronizedRootGroup;
+				path = StateLensHeart;
+				sourceTree = "<group>";
+			};
+			1970C0002F81227C000A60BD /* Shared */ = {
+				isa = PBXFileSystemSynchronizedRootGroup;
+				path = Shared;
+				sourceTree = "<group>";
+			};
+			1970B8CB2F81227C000A60BD /* StateLensHeart Watch App */ = {
+				isa = PBXFileSystemSynchronizedRootGroup;
+				path = "StateLensHeart Watch App";
+				sourceTree = "<group>";
+			};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1970B8B72F81227C000A60BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1970B8C42F81227C000A60BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1970B8B12F81227C000A60BD = {
+			isa = PBXGroup;
+				children = (
+						1970B8BC2F81227C000A60BD /* StateLensHeart */,
+						1970C0002F81227C000A60BD /* Shared */,
+						1970B8CB2F81227C000A60BD /* StateLensHeart Watch App */,
+						1970B8BB2F81227C000A60BD /* Products */,
+				);
+			sourceTree = "<group>";
+		};
+		1970B8BB2F81227C000A60BD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+					1970B8BA2F81227C000A60BD /* StateLensHeart.app */,
+					1970B8C72F81227C000A60BD /* StateLensHeart Watch App.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+			1970B8B92F81227C000A60BD /* StateLensHeart */ = {
+				isa = PBXNativeTarget;
+				buildConfigurationList = 1970B8D82F81227D000A60BD /* Build configuration list for PBXNativeTarget "StateLensHeart" */;
+			buildPhases = (
+				1970B8B62F81227C000A60BD /* Sources */,
+				1970B8B72F81227C000A60BD /* Frameworks */,
+				1970B8B82F81227C000A60BD /* Resources */,
+				1970B8D72F81227D000A60BD /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1970B8CA2F81227C000A60BD /* PBXTargetDependency */,
+			);
+				fileSystemSynchronizedGroups = (
+						1970B8BC2F81227C000A60BD /* StateLensHeart */,
+						1970C0002F81227C000A60BD /* Shared */,
+					);
+				name = StateLensHeart;
+				packageProductDependencies = (
+				);
+				productName = StateLensHeart;
+				productReference = 1970B8BA2F81227C000A60BD /* StateLensHeart.app */;
+				productType = "com.apple.product-type.application";
+			};
+			1970B8C62F81227C000A60BD /* StateLensHeart Watch App */ = {
+				isa = PBXNativeTarget;
+				buildConfigurationList = 1970B8D42F81227D000A60BD /* Build configuration list for PBXNativeTarget "StateLensHeart Watch App" */;
+			buildPhases = (
+				1970B8C32F81227C000A60BD /* Sources */,
+				1970B8C42F81227C000A60BD /* Frameworks */,
+				1970B8C52F81227C000A60BD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+				fileSystemSynchronizedGroups = (
+						1970C0002F81227C000A60BD /* Shared */,
+						1970B8CB2F81227C000A60BD /* StateLensHeart Watch App */,
+					);
+				name = "StateLensHeart Watch App";
+				packageProductDependencies = (
+				);
+				productName = "StateLensHeart Watch App";
+				productReference = 1970B8C72F81227C000A60BD /* StateLensHeart Watch App.app */;
+				productType = "com.apple.product-type.application";
+			};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+			1970B8B22F81227C000A60BD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2640;
+				LastUpgradeCheck = 2640;
+				TargetAttributes = {
+					1970B8B92F81227C000A60BD = {
+						CreatedOnToolsVersion = 26.4;
+						DevelopmentTeam = X8YW3A4U4B;
+						ProvisioningStyle = Automatic;
+					};
+					1970B8C62F81227C000A60BD = {
+						CreatedOnToolsVersion = 26.4;
+						DevelopmentTeam = X8YW3A4U4B;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+				buildConfigurationList = 1970B8B52F81227C000A60BD /* Build configuration list for PBXProject "StateLensHeart" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1970B8B12F81227C000A60BD;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 1970B8BB2F81227C000A60BD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+					1970B8B92F81227C000A60BD /* StateLensHeart */,
+					1970B8C62F81227C000A60BD /* StateLensHeart Watch App */,
+				);
+			};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1970B8B82F81227C000A60BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1970B8C52F81227C000A60BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1970B8B62F81227C000A60BD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1970B8C32F81227C000A60BD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+			1970B8CA2F81227C000A60BD /* PBXTargetDependency */ = {
+				isa = PBXTargetDependency;
+				target = 1970B8C62F81227C000A60BD /* StateLensHeart Watch App */;
+				targetProxy = 1970B8C92F81227C000A60BD /* PBXContainerItemProxy */;
+			};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1970B8D22F81227D000A60BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = X8YW3A4U4B;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1970B8D32F81227D000A60BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = X8YW3A4U4B;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		1970B8D52F81227D000A60BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+					CODE_SIGN_STYLE = Automatic;
+					CODE_SIGN_ENTITLEMENTS = "Config/Watch/StateLensHeartWatch.entitlements";
+					CURRENT_PROJECT_VERSION = 1;
+					DEVELOPMENT_TEAM = X8YW3A4U4B;
+					ENABLE_PREVIEWS = YES;
+					GENERATE_INFOPLIST_FILE = NO;
+					INFOPLIST_FILE = "Config/Watch/Info.plist";
+					LD_RUNPATH_SEARCH_PATHS = (
+						"$(inherited)",
+						"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+					PRODUCT_BUNDLE_IDENTIFIER = "app.Nishioka.Mahirosann.StateLensHeart.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		1970B8D62F81227D000A60BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+					CODE_SIGN_STYLE = Automatic;
+					CODE_SIGN_ENTITLEMENTS = "Config/Watch/StateLensHeartWatch.entitlements";
+					CURRENT_PROJECT_VERSION = 1;
+					DEVELOPMENT_TEAM = X8YW3A4U4B;
+					ENABLE_PREVIEWS = YES;
+					GENERATE_INFOPLIST_FILE = NO;
+					INFOPLIST_FILE = "Config/Watch/Info.plist";
+					LD_RUNPATH_SEARCH_PATHS = (
+						"$(inherited)",
+						"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+					PRODUCT_BUNDLE_IDENTIFIER = "app.Nishioka.Mahirosann.StateLensHeart.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		1970B8D92F81227D000A60BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+					ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+					ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+					CODE_SIGN_STYLE = Automatic;
+					CODE_SIGN_ENTITLEMENTS = "Config/iPhone/StateLensHeart.entitlements";
+					CURRENT_PROJECT_VERSION = 1;
+					DEVELOPMENT_TEAM = X8YW3A4U4B;
+					ENABLE_PREVIEWS = YES;
+					GENERATE_INFOPLIST_FILE = NO;
+					INFOPLIST_FILE = "Config/iPhone/Info.plist";
+					IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+					LD_RUNPATH_SEARCH_PATHS = (
+						"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+					PRODUCT_BUNDLE_IDENTIFIER = "app.Nishioka.Mahirosann.StateLensHeart";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		1970B8DA2F81227D000A60BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+					ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+					ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+					CODE_SIGN_STYLE = Automatic;
+					CODE_SIGN_ENTITLEMENTS = "Config/iPhone/StateLensHeart.entitlements";
+					CURRENT_PROJECT_VERSION = 1;
+					DEVELOPMENT_TEAM = X8YW3A4U4B;
+					ENABLE_PREVIEWS = YES;
+					GENERATE_INFOPLIST_FILE = NO;
+					INFOPLIST_FILE = "Config/iPhone/Info.plist";
+					IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+					LD_RUNPATH_SEARCH_PATHS = (
+						"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+					PRODUCT_BUNDLE_IDENTIFIER = "app.Nishioka.Mahirosann.StateLensHeart";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+			1970B8B52F81227C000A60BD /* Build configuration list for PBXProject "StateLensHeart" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1970B8D22F81227D000A60BD /* Debug */,
+				1970B8D32F81227D000A60BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+			1970B8D42F81227D000A60BD /* Build configuration list for PBXNativeTarget "StateLensHeart Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1970B8D52F81227D000A60BD /* Debug */,
+				1970B8D62F81227D000A60BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+			1970B8D82F81227D000A60BD /* Build configuration list for PBXNativeTarget "StateLensHeart" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1970B8D92F81227D000A60BD /* Debug */,
+				1970B8DA2F81227D000A60BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1970B8B22F81227C000A60BD /* Project object */;
+}

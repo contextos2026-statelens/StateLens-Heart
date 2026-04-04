@@ -33,20 +33,15 @@ struct SlidingHeartWindow {
         let shortTermVariation = sqrt(variance)
 
         let motionMean = windowed.map(\.motionScore).reduce(0, +) / Double(windowed.count)
-        let stationaryCount = windowed.filter(\.isStationary).count
-        let stationaryRatio = Double(stationaryCount) / Double(windowed.count)
-
-        let validCount = windowed.filter { $0.confidence >= 0.6 }.count
-        let validRatio = Double(validCount) / Double(windowed.count)
-
-        let slope = linearRegressionSlopePerMinute(samples: windowed)
+        let stationaryRatio = Double(windowed.filter(\.isStationary).count) / Double(windowed.count)
+        let validRatio = Double(windowed.filter { $0.confidence >= 0.6 }.count) / Double(windowed.count)
 
         return WindowFeatures(
             windowSeconds: duration,
             sampleCount: windowed.count,
             meanHR: meanHR,
             shortTermVariation: shortTermVariation,
-            heartRateSlopePerMinute: slope,
+            heartRateSlopePerMinute: linearRegressionSlopePerMinute(samples: windowed),
             motionMean: motionMean,
             stationaryRatio: stationaryRatio,
             validRatio: validRatio
@@ -61,7 +56,6 @@ struct SlidingHeartWindow {
 
         let meanX = xs.reduce(0, +) / Double(xs.count)
         let meanY = ys.reduce(0, +) / Double(ys.count)
-
         let numerator = zip(xs, ys).map { ($0 - meanX) * ($1 - meanY) }.reduce(0, +)
         let denominator = xs.map { pow($0 - meanX, 2) }.reduce(0, +)
 

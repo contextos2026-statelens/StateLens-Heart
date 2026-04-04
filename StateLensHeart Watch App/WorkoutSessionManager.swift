@@ -1,6 +1,9 @@
 import Combine
 import Foundation
+import SwiftUI
+#if canImport(HealthKit)
 import HealthKit
+#endif
 
 @MainActor
 final class WorkoutSessionManager: NSObject, ObservableObject {
@@ -13,18 +16,24 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
     @Published private(set) var inputModeText = "Live"
     @Published private(set) var latestSignalConfidence: Double?
     @Published private(set) var latestSampleCount = 0
+    @Published private(set) var latestAutonomicScores: AutonomicScores?
+    @Published private(set) var latestEmotionEstimate: EmotionEstimate?
+    @Published private(set) var latestAnomalyEvent: AnomalyEvent?
 
+#if canImport(HealthKit)
     private let healthStore = HKHealthStore()
+    private var workoutSession: HKWorkoutSession?
+    private var workoutBuilder: HKLiveWorkoutBuilder?
+#endif
+
     private let motionProvider = MotionSignalProvider()
     private let estimator = StateEstimator()
     private let logStore = SessionLogStore()
-
-    private var workoutSession: HKWorkoutSession?
-    private var workoutBuilder: HKLiveWorkoutBuilder?
     private var window = SlidingHeartWindow(duration: 45)
     private var latestMotionSnapshot = MotionSnapshot(timestamp: Date(), motionScore: 0, isStationary: true)
     private var mockTimer: Timer?
-    private var mockTick: Int = 0
+    private var mockTick = 0
+    private var lastAnomalyTimestamps: [AnomalyEventType: Date] = [:]
 
     override init() {
         super.init()
@@ -38,11 +47,7 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
     }
 
     func requestAuthorizationIfNeeded() async {
-#if targetEnvironment(simulator)
-        authorizationStatusText = "Simulator mock mode"
-        inputModeText = "Mock"
-        return
-#else
+#if os(watchOS) && !targetEnvironment(simulator) && canImport(HealthKit)
         guard HKHealthStore.isHealthDataAvailable() else {
             authorizationStatusText = "Health data unavailable"
             return
@@ -58,10 +63,14 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
                 read: [heartRate, hrv, workout]
             )
             authorizationStatusText = "Authorized"
+            inputModeText = "Live"
         } catch {
             authorizationStatusText = "Authorization failed"
             latestErrorMessage = error.localizedDescription
         }
+#else
+        authorizationStatusText = "Simulator mock mode"
+        inputModeText = "Mock"
 #endif
     }
 
@@ -77,10 +86,7 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
     }
 
     private func startSession() {
-#if targetEnvironment(simulator)
-        startMockSession()
-        return
-#else
+#if os(watchOS) && !targetEnvironment(simulator) && canImport(HealthKit)
         do {
             let configuration = HKWorkoutConfiguration()
             configuration.activityType = .mindAndBody
@@ -99,15 +105,11 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
             let startDate = Date()
             workoutSession = session
             workoutBuilder = builder
-            window.reset()
-            currentHeartRate = nil
-            currentEstimation = nil
-            latestErrorMessage = nil
-            latestSignalConfidence = nil
-            latestSampleCount = 0
+            resetForNewSession(inputMode: "Live")
 
             logStore.startSession()
             motionProvider.start()
+            publishLiveStatus(isSessionRunning: true, at: startDate)
 
             session.startActivity(with: startDate)
             builder.beginCollection(withStart: startDate) { [weak self] success, error in
@@ -123,18 +125,18 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
         } catch {
             latestErrorMessage = error.localizedDescription
         }
+#else
+        startMockSession()
 #endif
     }
 
     private func stopSession() {
-#if targetEnvironment(simulator)
-        stopMockSession()
-        return
-#else
+#if os(watchOS) && !targetEnvironment(simulator) && canImport(HealthKit)
         guard let session = workoutSession, let builder = workoutBuilder else { return }
 
         isRunning = false
         motionProvider.stop()
+        publishLiveStatus(isSessionRunning: false, at: Date())
         session.end()
 
         let endDate = Date()
@@ -158,7 +160,25 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
 
         workoutSession = nil
         workoutBuilder = nil
+#else
+        stopMockSession()
 #endif
+    }
+
+    private func resetForNewSession(inputMode: String) {
+        window.reset()
+        currentHeartRate = nil
+        currentEstimation = nil
+        latestErrorMessage = nil
+        latestMotionScore = 0
+        latestSignalConfidence = nil
+        latestSampleCount = 0
+        latestAutonomicScores = nil
+        latestEmotionEstimate = nil
+        latestAnomalyEvent = nil
+        lastAnomalyTimestamps.removeAll()
+        mockTick = 0
+        inputModeText = inputMode
     }
 
     private func handleHeartRate(_ bpm: Double, at date: Date) {
@@ -177,11 +197,49 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
         latestSignalConfidence = confidence
         latestSampleCount = window.samples.count
 
+        var detectedEvents: [AnomalyEvent] = []
         if let features = window.features(referenceDate: date) {
             currentEstimation = estimator.estimate(from: features, now: date)
+            latestAutonomicScores = estimator.autonomicScores(from: features, now: date)
+            if let latestAutonomicScores {
+                latestEmotionEstimate = estimator.emotionEstimate(
+                    from: currentEstimation?.state ?? .unknown,
+                    autonomic: latestAutonomicScores,
+                    features: features,
+                    now: date
+                )
+            }
+            detectedEvents = detectAnomalies(
+                bpm: bpm,
+                at: date,
+                signalConfidence: confidence,
+                features: features
+            )
+        } else {
+            currentEstimation = nil
+            latestAutonomicScores = nil
+            latestEmotionEstimate = nil
         }
+        latestAnomalyEvent = detectedEvents.last
 
-        logStore.append(sample: sample, estimation: currentEstimation)
+        publishLiveStatus(isSessionRunning: isRunning, at: date)
+
+        let timelinePoint = TimelinePoint(
+            timestamp: date,
+            bpm: bpm,
+            signalConfidence: confidence,
+            motionScore: latestMotionSnapshot.motionScore,
+            state: currentEstimation?.state ?? .unknown,
+            stateConfidence: currentEstimation?.confidence,
+            autonomicScores: latestAutonomicScores,
+            emotionEstimate: latestEmotionEstimate
+        )
+        logStore.append(
+            sample: sample,
+            estimation: currentEstimation,
+            timelinePoint: timelinePoint,
+            newEvents: detectedEvents
+        )
     }
 
     private func baseConfidence(for motion: MotionSnapshot) -> Double {
@@ -191,34 +249,30 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
     }
 
     private func startMockSession() {
-        window.reset()
-        currentHeartRate = nil
-        currentEstimation = nil
-        latestErrorMessage = nil
-        latestMotionScore = 0
-        latestSignalConfidence = nil
-        latestSampleCount = 0
-        mockTick = 0
-        inputModeText = "Mock"
+        resetForNewSession(inputMode: "Mock")
         isRunning = true
-
         logStore.startSession()
+        publishLiveStatus(isSessionRunning: true, at: Date())
         emitMockSample()
 
         mockTimer?.invalidate()
-        mockTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            Task { @MainActor in
-                self?.emitMockSample()
-            }
-        }
+        let timer = Timer(
+            timeInterval: 1.0,
+            target: self,
+            selector: #selector(handleMockTimerTick),
+            userInfo: nil,
+            repeats: true
+        )
+        RunLoop.main.add(timer, forMode: .common)
+        mockTimer = timer
     }
 
     private func stopMockSession() {
         guard mockTimer != nil || isRunning else { return }
-
         mockTimer?.invalidate()
         mockTimer = nil
         isRunning = false
+        publishLiveStatus(isSessionRunning: false, at: Date())
 
         do {
             if let fileURL = try logStore.finishSession() {
@@ -227,6 +281,116 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
         } catch {
             latestErrorMessage = error.localizedDescription
         }
+    }
+
+    @objc
+    private func handleMockTimerTick() {
+        emitMockSample()
+    }
+
+    private func publishLiveStatus(isSessionRunning: Bool, at date: Date) {
+        let status = LiveWatchStatus(
+            timestamp: date,
+            isSessionRunning: isSessionRunning,
+            inputMode: inputModeText,
+            heartRate: currentHeartRate,
+            state: currentEstimation?.state ?? .unknown,
+            stateConfidence: currentEstimation?.confidence,
+            signalConfidence: latestSignalConfidence,
+            motionScore: latestMotionScore,
+            sampleCount: latestSampleCount,
+            autonomicScores: latestAutonomicScores,
+            emotionEstimate: latestEmotionEstimate,
+            latestEvent: latestAnomalyEvent
+        )
+        ConnectivityBridge.shared.sendLiveStatus(status)
+    }
+
+    private func detectAnomalies(
+        bpm: Double,
+        at date: Date,
+        signalConfidence: Double,
+        features: WindowFeatures
+    ) -> [AnomalyEvent] {
+        var events: [AnomalyEvent] = []
+        let previousBPM = window.samples.dropLast().last?.bpm
+        let delta = previousBPM.map { bpm - $0 }
+
+        if let delta, delta >= 15,
+           shouldEmitEvent(type: .suddenRise, at: date, cooldown: 45) {
+            events.append(
+                AnomalyEvent(
+                    timestamp: date,
+                    type: .suddenRise,
+                    severity: delta >= 22 ? .high : .warn,
+                    summary: "Rapid heart-rate rise detected",
+                    heartRate: bpm,
+                    deltaFromPrevious: delta,
+                    motionScore: latestMotionSnapshot.motionScore,
+                    signalConfidence: signalConfidence
+                )
+            )
+        }
+
+        if let delta, delta <= -15,
+           shouldEmitEvent(type: .suddenDrop, at: date, cooldown: 45) {
+            events.append(
+                AnomalyEvent(
+                    timestamp: date,
+                    type: .suddenDrop,
+                    severity: delta <= -22 ? .high : .warn,
+                    summary: "Rapid heart-rate drop detected",
+                    heartRate: bpm,
+                    deltaFromPrevious: delta,
+                    motionScore: latestMotionSnapshot.motionScore,
+                    signalConfidence: signalConfidence
+                )
+            )
+        }
+
+        if features.shortTermVariation >= 12, features.motionMean <= 0.06,
+           shouldEmitEvent(type: .irregularPattern, at: date, cooldown: 90) {
+            events.append(
+                AnomalyEvent(
+                    timestamp: date,
+                    type: .irregularPattern,
+                    severity: features.shortTermVariation >= 16 ? .high : .warn,
+                    summary: "Irregular low-motion pattern detected",
+                    heartRate: bpm,
+                    deltaFromPrevious: delta,
+                    motionScore: latestMotionSnapshot.motionScore,
+                    signalConfidence: signalConfidence
+                )
+            )
+        }
+
+        if signalConfidence < 0.35,
+           shouldEmitEvent(type: .lowSignal, at: date, cooldown: 60) {
+            events.append(
+                AnomalyEvent(
+                    timestamp: date,
+                    type: .lowSignal,
+                    severity: .info,
+                    summary: "Signal quality is low, interpretation may be unstable",
+                    heartRate: bpm,
+                    deltaFromPrevious: delta,
+                    motionScore: latestMotionSnapshot.motionScore,
+                    signalConfidence: signalConfidence
+                )
+            )
+        }
+
+        return events
+    }
+
+    private func shouldEmitEvent(type: AnomalyEventType, at date: Date, cooldown: TimeInterval) -> Bool {
+        guard let last = lastAnomalyTimestamps[type] else {
+            lastAnomalyTimestamps[type] = date
+            return true
+        }
+        guard date.timeIntervalSince(last) >= cooldown else { return false }
+        lastAnomalyTimestamps[type] = date
+        return true
     }
 
     private func emitMockSample() {
@@ -268,8 +432,7 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
             stationary = true
         }
 
-        let confidence = min(max(phase == 2 ? 0.62 : 0.84, 0.2), 0.95)
-
+        let confidence = phase == 2 ? 0.62 : 0.84
         return HeartSample(
             timestamp: date,
             bpm: bpm,
@@ -280,6 +443,7 @@ final class WorkoutSessionManager: NSObject, ObservableObject {
     }
 }
 
+#if os(watchOS) && canImport(HealthKit)
 extension WorkoutSessionManager: HKWorkoutSessionDelegate {
     nonisolated func workoutSession(
         _ workoutSession: HKWorkoutSession,
@@ -324,3 +488,4 @@ extension WorkoutSessionManager: HKLiveWorkoutBuilderDelegate {
         }
     }
 }
+#endif

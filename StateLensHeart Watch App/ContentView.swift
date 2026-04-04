@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct WatchRootView: View {
+struct ContentView: View {
     @StateObject private var manager = WorkoutSessionManager()
 
     var body: some View {
@@ -25,10 +25,25 @@ struct WatchRootView: View {
 
                 HStack {
                     metricCard(title: "Motion", value: String(format: "%.03f", manager.latestMotionScore))
-                    metricCard(
-                        title: "Samples",
-                        value: "\(manager.latestSampleCount)"
-                    )
+                    metricCard(title: "Samples", value: "\(manager.latestSampleCount)")
+                }
+
+                HStack {
+                    metricCard(title: "Symp", value: scoreText(manager.latestAutonomicScores?.sympatheticScore))
+                    metricCard(title: "Para", value: scoreText(manager.latestAutonomicScores?.parasympatheticScore))
+                }
+
+                if let emotion = manager.latestEmotionEstimate {
+                    Text("感情推定: \(emotion.label.japaneseName)")
+                        .font(.caption2)
+                        .foregroundStyle(emotionColor(emotion.label))
+                }
+
+                if let event = manager.latestAnomalyEvent {
+                    Text("Event: \(event.summary)")
+                        .font(.caption2)
+                        .foregroundStyle(eventColor(event.severity))
+                        .multilineTextAlignment(.center)
                 }
 
                 Button(manager.isRunning ? "Stop" : "Start") {
@@ -41,12 +56,12 @@ struct WatchRootView: View {
                     .font(.caption2)
                     .foregroundStyle(.secondary)
 
-#if targetEnvironment(simulator)
-                Text("Simulator uses a scripted heart-rate stream for UI and logic testing.")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-#endif
+                if manager.inputModeText == "Mock" {
+                    Text("Simulator and iPhone-hosted builds use a scripted heart-rate stream.")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
 
                 if let error = manager.latestErrorMessage {
                     Text(error)
@@ -101,5 +116,40 @@ struct WatchRootView: View {
         .frame(maxWidth: .infinity)
         .padding(8)
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+    }
+
+    private func scoreText(_ value: Double?) -> String {
+        guard let value else { return "--" }
+        return "\(Int((value * 100).rounded()))%"
+    }
+
+    private func eventColor(_ severity: AnomalySeverity) -> Color {
+        switch severity {
+        case .info:
+            return .yellow
+        case .warn:
+            return .orange
+        case .high:
+            return .red
+        }
+    }
+
+    private func emotionColor(_ label: EmotionLabel) -> Color {
+        switch label {
+        case .calm:
+            return .blue
+        case .focused:
+            return .cyan
+        case .tense:
+            return .red
+        case .energized:
+            return .orange
+        case .fatigued:
+            return .purple
+        case .neutral:
+            return .green
+        case .unknown:
+            return .gray
+        }
     }
 }

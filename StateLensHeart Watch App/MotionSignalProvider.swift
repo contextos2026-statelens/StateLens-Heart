@@ -1,5 +1,7 @@
-import CoreMotion
 import Foundation
+#if canImport(CoreMotion)
+import CoreMotion
+#endif
 
 struct MotionSnapshot {
     let timestamp: Date
@@ -8,12 +10,15 @@ struct MotionSnapshot {
 }
 
 final class MotionSignalProvider {
+#if canImport(CoreMotion)
     private let motionManager = CMMotionManager()
     private let queue = OperationQueue()
+#endif
 
     var onUpdate: ((MotionSnapshot) -> Void)?
 
     func start() {
+#if canImport(CoreMotion)
         guard motionManager.isDeviceMotionAvailable else { return }
         motionManager.deviceMotionUpdateInterval = 1.0
         queue.name = "MotionSignalProvider"
@@ -27,17 +32,20 @@ final class MotionSignalProvider {
                 pow(acceleration.z, 2)
             )
 
-            let snapshot = MotionSnapshot(
-                timestamp: Date(),
-                motionScore: magnitude,
-                isStationary: magnitude < 0.03
+            self.onUpdate?(
+                MotionSnapshot(
+                    timestamp: Date(),
+                    motionScore: magnitude,
+                    isStationary: magnitude < 0.03
+                )
             )
-
-            self.onUpdate?(snapshot)
         }
+#endif
     }
 
     func stop() {
+#if canImport(CoreMotion)
         motionManager.stopDeviceMotionUpdates()
+#endif
     }
 }
