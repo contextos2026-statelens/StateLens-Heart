@@ -4,8 +4,13 @@
 - `MARKETING_VERSION`: `1.1.0`
 - `CURRENT_PROJECT_VERSION`: `2`
 
+## 対応スコープ
+- Apple Watch Series 7 / 8 は `watchOS 10 以上` を対象として対応確認を進める
+- `WATCHOS_DEPLOYMENT_TARGET` は現行の `10.0` を維持し、`watchOS 9` 対応は今回の対象外とする
+
 ## リリース前チェック
 - iPhone 15 / Apple Watch 11 (42mm) 実機でWatchコンパニオン動作確認
+- Apple Watch Series 7 / 8 は `watchOS 10 以上` の実機で確認する
 - HealthKit / Motion の許可説明文に「医療診断用途ではない」旨を明記
 - ユーザー別の履歴分離、ベースライン分離、ライブ表示分離を確認
 - 感情推定・自律神経スコア・イベントログが履歴に残ることを確認

@@ -1,9 +1,16 @@
-# StateLensHeart QA Checklist (iPhone 15 + Apple Watch 11 42mm)
+# StateLensHeart QA Checklist (iPhone 15 + Apple Watch 11 / Series 7 / 8)
+
+## 0. 対応前提
+- Apple Watch Series 7 / 8 の確認対象は `watchOS 10 以上`
+- `watchOS 9` は今回の確認対象外
 
 ## 1. 基本接続
 - Watchアプリ起動後、iPhoneの「リアルタイム」にライブデータが出る
 - Watchのセッション停止後、iPhoneの「履歴」にセッションが保存される
 - iPhone再起動後も履歴データが残る
+- Series 7 / 8 の 41mm / 45mm で初期画面の BPM、状態表示、Start / Stop が見切れない
+- Series 7 / 8 の 41mm / 45mm で 3分校正 / 5分校正 ボタンが表示され、タップ可能
+- Series 7 / 8 の 41mm / 45mm で下部情報までスクロールでき、レイアウト崩れがない
 
 ## 2. ユーザー切替
 - Watchでユーザーを切り替えると、そのユーザーIDでセッションが記録される
