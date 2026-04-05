@@ -26,6 +26,17 @@
 	<string>Apple Watch から受信した心拍と推定ログをウェルネス可視化するために使用します。医療診断用途ではありません。</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>計測セッションをウェルネス用途の履歴として保存するために使用します。医療診断用途ではありません。</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>192.168.4.57</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

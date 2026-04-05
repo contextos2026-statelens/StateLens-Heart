@@ -160,6 +160,9 @@ final class WatchSessionStore: NSObject, ObservableObject {
         liveStatus = status
         lastReceivedAt = status.timestamp
         latestErrorMessage = nil
+        Task {
+            await ConvMonitorHeartForwarder.shared.enqueue(status)
+        }
     }
 
     private func makeLiveStatus(from payload: [String: Any]) -> LiveWatchStatus? {
